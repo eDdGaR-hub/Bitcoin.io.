@@ -4,64 +4,47 @@ document.querySelector('form').addEventListener('submit', function(event) {
     this.reset(); // Resetea el formulario
 });
 
-const ctxRealTime = document.getElementById('realTimeChart').getContext('2d');
+// Inicialización de gráficos
+const ctxPrice = document.getElementById('priceChart').getContext('2d');
+const ctxVolume = document.getElementById('volumeChart').getContext('2d');
 
-let realTimeChart = new Chart(ctxRealTime, {
+const priceChart = new Chart(ctxPrice, {
     type: 'line',
     data: {
-        labels: [], // Etiquetas de tiempo
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         datasets: [{
             label: 'Precio de Bitcoin',
-            data: [], // Datos de precios
-            borderColor: 'rgba(128, 0, 128, 1)', // Color morado
-            backgroundColor: 'rgba(128, 0, 128, 0.2)', // Color de fondo
-            fill: true,
+            data: [30000, 32000, 28000, 35000, 37000, 40000, 38000, 39000, 45000, 46000, 47000, 50000],
+            borderColor: 'rgba(255, 193, 7, 1)',
+            fill: false,
         }]
     },
     options: {
         responsive: true,
         scales: {
             y: {
-                beginAtZero: false,
-                title: {
-                    display: true,
-                    text: 'Precio en USD'
-                }
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Tiempo'
-                }
+                beginAtZero: false
             }
         }
     }
 });
 
-// Función para obtener datos en tiempo real
-async function fetchBitcoinData() {
-    try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-        const data = await response.json();
-        const price = data.bitcoin.usd;
-
-        // Agregar datos al gráfico
-        const now = new Date().toLocaleTimeString();
-        realTimeChart.data.labels.push(now);
-        realTimeChart.data.datasets[0].data.push(price);
-
-        // Limitar la cantidad de datos en el gráfico
-        if (realTimeChart.data.labels.length > 20) {
-            realTimeChart.data.labels.shift();
-            realTimeChart.data.datasets[0].data.shift();
+const volumeChart = new Chart(ctxVolume, {
+    type: 'bar',
+    data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        datasets: [{
+            label: 'Volumen de Transacciones',
+            data: [1000, 1200, 900, 1500, 1700, 1800, 1600, 2000, 2100, 2500, 3000, 3500],
+            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
         }
-
-        realTimeChart.update();
-    } catch (error) {
-        console.error('Error fetching Bitcoin data:', error);
     }
-}
-
-// Actualizar datos cada 60 segundos
-setInterval(fetchBitcoinData, 60000);
-fetchBitcoinData(); // Llamar la función inmediatamente para iniciar
+});
